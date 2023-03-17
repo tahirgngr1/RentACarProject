@@ -25,7 +25,7 @@ namespace Business.Concrate
                 _carDal.Add(car);
             }
             else
-                return;
+                Console.WriteLine("Kurallar geçersiz");
         }
 
         public List<Car> GetAll()
