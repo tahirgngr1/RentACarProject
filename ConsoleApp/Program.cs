@@ -10,24 +10,19 @@ namespace ConsoleApp
     {
         static void Main(string[] args)
         {
-            //AddMethod();
             CarManager carManager = new CarManager(new EfCarDal());
-            foreach (var car in carManager.GetCarDetails())
+            var result = carManager.GetCarDetails();
+            if(result.Success == true)
             {
-                Console.WriteLine(car.CarName + " / " + car.BrandName + " / " + car.ColorName + " / " + car.DailyPrice);
+                foreach (var car in result.Data)
+                {
+                    Console.WriteLine(car.CarName + " / " + car.ColorName + " / " + car.BrandName + " / " + car.DailyPrice);
+                }
+            }
+            else
+            {
+                Console.WriteLine(result.Message);
             }
         }
-
-        private static void AddMethod()
-        {
-            CarManager carManager = new CarManager(new EfCarDal());
-
-            carManager.Add(new Car { CarName = "A2", BrandId = 1, ColorId = 1, DailyPrice = 250000, Description = "asdf", ModelYear = 2000 });
-            foreach (var car in carManager.GetAll())
-            {
-                Console.WriteLine(car.CarName);
-            }
-        }
-        
     }
 }
