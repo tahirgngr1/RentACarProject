@@ -2,6 +2,7 @@
 using DataAccess.Abstract;
 using DataAccess.DTOs;
 using Entities.Concrate;
+using Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,6 +15,15 @@ namespace DataAccess.Concrate.EntityFramework
 {
     public class EfCarDal : EfEntityRepositoryBase<Car, RentACarContext>, ICarDal
     {
+        public Car GetCarByLicanse(string carLicence)
+        {
+            using (RentACarContext context = new RentACarContext())
+            {
+
+                var result = context.Cars.SingleOrDefault(x => x.CarLicence.Equals(carLicence));
+                return result;
+            }
+        }
         public List<CarDetailDto> GetCarDetails()
         {
             using (RentACarContext context = new RentACarContext())

@@ -10,5 +10,7 @@ namespace DataAccess.Abstract
 {
     public interface IRentalDal : IEntityRepository<Rental>
     {
+        public Rental findRental(int id);
+        public Rental GetRentalCarIdOrderByDESCReturnDate(Car Car);
     }
 }

@@ -54,6 +54,11 @@ namespace DataAccess.Concrate.InMemory
             throw new NotImplementedException();
         }
 
+        public Car GetCarByLicanse(string carLicence)
+        {
+            throw new NotImplementedException();
+        }
+
         public List<CarDetailDto> GetCarDetails()
         {
             throw new NotImplementedException();

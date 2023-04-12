@@ -6,6 +6,7 @@ using Entities.Concrate;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,26 +15,41 @@ namespace Business.Concrate
     public class RentalManager : IRentalService
     {
         IRentalDal _rentalDal;
-        public RentalManager(IRentalDal rentalDal)
+        ICarService _carService;
+        public RentalManager(IRentalDal rentalDal, ICarService carService)
         {
             _rentalDal = rentalDal;
+            _carService = carService;
         }
 
         public IResult Add(Rental rental)
         {
-            if(rental.ReturnDate != null)
+            if(_carService.findCarStatus(rental.CarId))
             {
-                _rentalDal.Add(rental);
+               _rentalDal.Add(rental);
+                var res = _carService.getCarById(rental.CarId);
+                if(res.Success == true)
+                {
+                    res.Data.carStatus = Entities.Enums.CarStatus.RENTED;
+                    _carService.Update(res.Data);
+                }
+                
                 return new SuccessResult();
             }
-            Console.WriteLine(Messages.CurrentlyUnavailable);
-            return new ErrorResult();
+        
+            return new ErrorResult(Messages.CurrentlyUnavailable);
         }
-
         public IResult Delete(Rental rental)
         {
             _rentalDal.Delete(rental);
             return new SuccessResult();
+        }
+
+        public IDataResult<Rental> FindFirstRentalCarByCarId(int id)
+        {
+            var result = _rentalDal.findRental(id);
+            if (result != null) return new SuccessDataResult<Rental>(result);
+            else return new ErrorDataResult<Rental>();
         }
 
         public IDataResult<List<Rental>> GetAll()
@@ -44,6 +60,19 @@ namespace Business.Concrate
         public IDataResult<Rental> GetById(int id)
         {
             return new SuccessDataResult<Rental>(_rentalDal.Get(r => r.RentalId == id));
+        }
+
+        public IResult handleReturnCar(string carLicance)
+        {
+          var car = _carService.GetCarByLicanse(carLicance);
+            if(car.Success == true)
+            {
+                var result = _rentalDal.GetRentalCarIdOrderByDESCReturnDate(car.Data);
+                result.ReturnDate = DateTime.Now;
+                Update(result);
+                return new SuccessResult();
+            }
+            return new ErrorResult(); 
         }
 
         public IResult Update(Rental rental)

@@ -18,5 +18,9 @@ namespace Business.Abstract
         IResult Add(Car car);
         IResult Update(Car car);
         IResult Delete(Car car);
+        IDataResult <Car>GetCarByLicanse(String carLicence);
+        Boolean findCarStatus(int id);
+        IDataResult<Car> getCarById(int id);
+
     }
 }
